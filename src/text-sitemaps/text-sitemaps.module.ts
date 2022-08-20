@@ -8,6 +8,7 @@ import { SitemapsModule } from 'src/sitemaps/sitemaps.module';
 import { TextSitemapsService } from './text-sitemaps.service';
 import { TextSitemapsConsumerService } from './text-sitemaps-consumer.service';
 import { TextSitemapsNewLinksCronService } from './text-sitemaps-new-links.cron.service';
+import { TextSitemapsDeletedLinksCronService } from './text-sitemaps-delete-links.cron.service';
 import { TextSitemapsProcessorService } from './text-sitemaps.processor.service';
 
 @Module({
@@ -19,12 +20,14 @@ import { TextSitemapsProcessorService } from './text-sitemaps.processor.service'
     TextSitemapsService,
     TextSitemapsConsumerService,
     TextSitemapsNewLinksCronService,
+    TextSitemapsDeletedLinksCronService,
     TextSitemapsProcessorService,
   ],
   exports: [
     TextSitemapsService,
     TextSitemapsConsumerService,
     TextSitemapsNewLinksCronService,
+    TextSitemapsDeletedLinksCronService,
     TextSitemapsProcessorService,
   ],
 })

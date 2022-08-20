@@ -112,4 +112,26 @@ export class TextSitemapsService {
       take: 50,
     });
   }
+
+  getMarkedForDeletionSessionLinks() {
+    return this.prisma.textSitemap.findMany({
+      where: {
+        isDeleted: true,
+        sitemapDeletionCycle: SitemapDeletionCycle.MARKED_FOR_DELETION,
+      },
+    });
+  }
+
+  updateSessionsMarkedForDeletionAsDeleted(ids: bigint[]) {
+    return this.prisma.textSitemap.updateMany({
+      where: {
+        id: {
+          in: ids,
+        },
+      },
+      data: {
+        sitemapDeletionCycle: SitemapDeletionCycle.DELETED,
+      },
+    });
+  }
 }
