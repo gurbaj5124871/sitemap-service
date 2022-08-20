@@ -10,3 +10,117 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+enum SitemapDeletionCycle {
+  NOT_DELETED
+  MARKED_FOR_DELETION
+  DELETED
+}
+
+model TextSitemapModulusCounter {
+  id        Int      @id
+  counter   Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model TextSitemap {
+  id   BigInt @id
+  link String
+
+  modulusHashBase  Int
+  modulusHashValue Int
+  counter          Int
+  fileName         String?
+  file             SitemapFile? @relation(fields: [fileName], references: fileName)
+
+  isIgnored            Boolean              @default(false)
+  isDeleted            Boolean              @default(false)
+  sitemapDeletionCycle SitemapDeletionCycle @default(NOT_DELETED)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model VideoSitemapModulusCounter {
+  id        Int      @id
+  counter   Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model SessionRecordingClip {
+  id                      Int      @id
+  link                    String
+  videoURL                String
+  title                   String
+  description             String
+  thumbnail               String
+  startTimestamp          DateTime
+  endTimestamp            DateTime
+  actualDurationInSeconds Int
+
+  modulusHashBase  Int
+  modulusHashValue Int
+  counter          Int
+  fileName         String?
+  file             SitemapFile? @relation(fields: [fileName], references: fileName)
+
+  isIgnored            Boolean              @default(false)
+  isDeleted            Boolean              @default(false)
+  sitemapDeletionCycle SitemapDeletionCycle @default(NOT_DELETED)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum SitemapFileLifeCycle {
+  UPLOADED
+  LINKED_TO_INDEX
+  MARKED_FOR_INDEX_LASTMOD_UPDATE
+}
+
+enum SitemapFileEntityType {
+  TEXT
+  VIDEO
+}
+
+model SitemapFile {
+  fileName   String                @id
+  link       String
+  lifeCycle  SitemapFileLifeCycle  @default(UPLOADED)
+  location   String
+  entityType SitemapFileEntityType
+
+  indexFileName String
+  indexFile     SitemapIndexFile @relation(fields: [indexFileName], references: fileName)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  TextSitemap          TextSitemap[]
+  SessionRecordingClip SessionRecordingClip[]
+}
+
+enum SitemapIndexFileLifeCycle {
+  UPLOADED
+  LINKED_TO_ROBOTS_DOT_TXT
+}
+
+model SitemapIndexFile {
+  fileName   String                    @id
+  link       String
+  lifeCycle  SitemapIndexFileLifeCycle @default(UPLOADED)
+  location   String
+  entityType SitemapFileEntityType
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  SitemapFile SitemapFile[]
+}
+
+model JobLock {
+  key       String    @id @unique
+  createdAt DateTime? @default(now())
+}
