@@ -1,0 +1,87 @@
+version: '3.4'
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: development
+    ports:
+      - 3000:3000
+    environment:
+      KAFKA_BROKERS: kafka:9092
+      DATABASE_URL: postgresql://user:password@localhost:5432/sitemaps?schema=public
+    env_file: .env
+    restart: unless-stopped
+    depends_on:
+      - postgres
+      - kafka
+    volumes:
+      - .:/home/node/app
+    command: npm run start:dev
+    stdin_open: true
+    tty: true
+
+  postgres:
+    image: postgres:13-buster
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+    restart: unless-stopped
+
+  adminer:
+    image: adminer
+    ports:
+      - 8080:8080
+    depends_on:
+      - postgres
+    restart: unless-stopped
+
+  zookeeper:
+    image: wurstmeister/zookeeper:latest
+    ports:
+      - 2181:2181
+    restart: unless-stopped
+
+  kafka:
+    image: wurstmeister/kafka:2.13-2.7.1
+    ports:
+      - 9092:9092
+    environment:
+      KAFKA_ADVERTISED_HOST_NAME: ${HOST_IP}
+      KAFKA_ADVERTISED_PORT: 9092
+
+      # Assign a consistent broker ID to prevent "leader not available"
+      # on recreate
+      KAFKA_BROKER_ID: 1
+
+      LOG4J_LOGGER_KAFKA: WARN
+      LOG4J_LOGGER_ORG_APACHE_KAFKA: WARN
+
+      LOG4J_LOGGER_ORG_APACHE_ZOOKEEPER: WARN
+      LOG4J_APPENDER_STDERR_THRESHOLD: WARN
+      LOG4J_APPENDER_STDERR_TARGET: System.err
+
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: 'true'
+      KAFKA_DELETE_TOPIC_ENABLE: 'true'
+      KAFKA_CREATE_TOPICS: text-sitemaps:3:1,video-sitemaps:3:1
+    depends_on:
+      - zookeeper
+    restart: unless-stopped
+
+  kafka-ui:
+    image: provectuslabs/kafka-ui:master
+    container_name: kafka-ui
+    ports:
+      - 7070:8080
+    restart: unless-stopped
+    depends_on:
+      - kafka
+    environment:
+      LOGGING_LEVEL_ROOT: warn
+      LOGGING_LEVEL_COM_PROVECTUS: warn
+      KAFKA_CLUSTERS_0_NAME: local
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:9092
+      KAFKA_CLUSTERS_0_ZOOKEEPER: zookeeper:2181
