@@ -12,6 +12,7 @@ import { PrismaService } from './prisma.service';
 import { LocksModule } from './locks/locks.module';
 import { AwsS3Module } from './s3/s3.module';
 import { TextSitemapsModule } from './text-sitemaps/text-sitemaps.module';
+import { VideoSitemapsModule } from './video-sitemaps/video-sitemaps.module';
 import { SitemapsModule } from './sitemaps/sitemaps.module';
 
 @Module({
@@ -32,6 +33,7 @@ import { SitemapsModule } from './sitemaps/sitemaps.module';
     AwsS3Module,
     LocksModule,
     TextSitemapsModule,
+    VideoSitemapsModule,
     SitemapsModule,
   ],
   controllers: [AppController],

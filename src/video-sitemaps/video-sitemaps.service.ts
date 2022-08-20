@@ -1,27 +1,22 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { SitemapDeletionCycle } from '@prisma/client';
 import { PrismaService } from '../prisma.service';
-import { KafkaTextSitemapEventMessage } from './dto/text-sitemaps-kafka.dto';
+import { KafkaVideoSitemapEventMessage } from './dto/video-sitemaps-kafka.dto';
 
 @Injectable()
-export class TextSitemapsService {
-  private readonly logger: Logger = new Logger(TextSitemapsService.name);
+export class VideoSitemapsService {
+  private readonly logger: Logger = new Logger(VideoSitemapsService.name);
 
   constructor(private prisma: PrismaService) {}
 
-  private getModulusTenHash(id: string) {
+  private getModulusTenHash(id: number) {
     return {
       modulusHashBase: 10,
       modulusHashValue: Number(BigInt(id) % BigInt(10)),
     };
   }
 
-  async create(
-    data: Pick<
-      KafkaTextSitemapEventMessage['textSitemap'],
-      'id' | 'url' | 'isIgnored' | 'isDeleted'
-    >,
-  ) {
+  async create(data: KafkaVideoSitemapEventMessage['videoSitemap']) {
     const { modulusHashBase, modulusHashValue } = this.getModulusTenHash(
       data.id,
     );
@@ -29,7 +24,7 @@ export class TextSitemapsService {
     await this.prisma
       .$transaction(async (prisma) => {
         const textSitemapCounter =
-          await prisma.textSitemapModulusCounter.upsert({
+          await prisma.videoSitemapModulusCounter.upsert({
             where: {
               id: modulusHashValue,
             },
@@ -42,10 +37,17 @@ export class TextSitemapsService {
             },
           });
 
-        return prisma.textSitemap.create({
+        return prisma.videoSitemap.create({
           data: {
-            id: BigInt(data.id),
-            link: data.url,
+            id: data.id,
+            link: data.link,
+            videoURL: data.videoURL,
+            title: data.title,
+            description: data.description,
+            thumbnail: data.thumbnail,
+            startTimestamp: data.startTimestamp,
+            endTimestamp: data.endTimestamp,
+            actualDurationInSeconds: data.actualDurationInSeconds,
             modulusHashBase,
             modulusHashValue,
             counter: textSitemapCounter.counter,
@@ -56,7 +58,7 @@ export class TextSitemapsService {
       })
       .catch((err) => {
         this.logger.error({
-          message: 'Error while creating text sitemap link',
+          message: 'Error while creating video sitemap link',
           error: err,
           data,
         });
@@ -68,15 +70,24 @@ export class TextSitemapsService {
       });
   }
 
-  async delete(
-    data: Pick<
-      KafkaTextSitemapEventMessage['textSitemap'],
-      'id' | 'url' | 'isIgnored' | 'isDeleted'
-    >,
-  ) {
-    return this.prisma.textSitemap.updateMany({
+  update(data: KafkaVideoSitemapEventMessage['videoSitemap']) {
+    return this.prisma.videoSitemap.updateMany({
       where: {
-        id: BigInt(data.id),
+        id: data.id,
+        isDeleted: false,
+      },
+      data: {
+        title: data.title,
+        description: data.description,
+        thumbnail: data.thumbnail,
+      },
+    });
+  }
+
+  delete(data: KafkaVideoSitemapEventMessage['videoSitemap']) {
+    return this.prisma.videoSitemap.updateMany({
+      where: {
+        id: data.id,
         isDeleted: false,
       },
       data: {
@@ -88,13 +99,13 @@ export class TextSitemapsService {
     });
   }
 
-  getUnprocessedTextSitemapLinks(filters?: {
+  getUnprocessedVideoSitemapsLinks(filters?: {
     modulus?: {
       modulusHashBase: number;
       modulusHashValue: number[];
     };
   }) {
-    return this.prisma.textSitemap.findMany({
+    return this.prisma.videoSitemap.findMany({
       where: {
         fileName: null,
         isDeleted: false,
@@ -113,8 +124,8 @@ export class TextSitemapsService {
     });
   }
 
-  getMarkedForDeletionTextSitemapsLinks() {
-    return this.prisma.textSitemap.findMany({
+  getMarkedForDeletionSessionRecordingClipLinks() {
+    return this.prisma.videoSitemap.findMany({
       where: {
         isDeleted: true,
         sitemapDeletionCycle: SitemapDeletionCycle.MARKED_FOR_DELETION,
@@ -122,8 +133,8 @@ export class TextSitemapsService {
     });
   }
 
-  updateTextSitemapsMarkedForDeletionAsDeleted(ids: bigint[]) {
-    return this.prisma.textSitemap.updateMany({
+  updateClipsMarkedForDeletionAsDeleted(ids: number[]) {
+    return this.prisma.videoSitemap.updateMany({
       where: {
         id: {
           in: ids,
