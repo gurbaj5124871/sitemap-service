@@ -64,6 +64,7 @@ CREATE TABLE "VideoSitemap" (
     "fileName" TEXT,
     "isIgnored" BOOLEAN NOT NULL DEFAULT false,
     "isDeleted" BOOLEAN NOT NULL DEFAULT false,
+    "isMarkedForUpdate" BOOLEAN NOT NULL DEFAULT false,
     "sitemapDeletionCycle" "SitemapDeletionCycle" NOT NULL DEFAULT 'NOT_DELETED',
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,

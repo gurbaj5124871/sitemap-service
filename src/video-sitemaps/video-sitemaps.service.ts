@@ -80,6 +80,7 @@ export class VideoSitemapsService {
         title: data.title,
         description: data.description,
         thumbnail: data.thumbnail,
+        ...(!data.isIgnored && { isMarkedForUpdate: true }),
       },
     });
   }
@@ -124,7 +125,29 @@ export class VideoSitemapsService {
     });
   }
 
-  getMarkedForDeletionSessionRecordingClipLinks() {
+  getMarkedForUpdateVideoSitemapLinks() {
+    return this.prisma.videoSitemap.findMany({
+      where: {
+        isDeleted: true,
+        isMarkedForUpdate: true,
+      },
+    });
+  }
+
+  unsetMarkedForUpdateForVideoSitemaps(ids: number[]) {
+    return this.prisma.videoSitemap.updateMany({
+      where: {
+        id: {
+          in: ids,
+        },
+      },
+      data: {
+        isMarkedForUpdate: false,
+      },
+    });
+  }
+
+  getMarkedForDeletionVideoSitemapLinks() {
     return this.prisma.videoSitemap.findMany({
       where: {
         isDeleted: true,
@@ -133,7 +156,7 @@ export class VideoSitemapsService {
     });
   }
 
-  updateClipsMarkedForDeletionAsDeleted(ids: number[]) {
+  updateVideoSitemapsMarkedForDeletionAsDeleted(ids: number[]) {
     return this.prisma.videoSitemap.updateMany({
       where: {
         id: {

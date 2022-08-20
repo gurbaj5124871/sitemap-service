@@ -68,6 +68,7 @@ model VideoSitemap {
 
   isIgnored            Boolean              @default(false)
   isDeleted            Boolean              @default(false)
+  isMarkedForUpdate    Boolean              @default(false)
   sitemapDeletionCycle SitemapDeletionCycle @default(NOT_DELETED)
 
   createdAt DateTime @default(now())
