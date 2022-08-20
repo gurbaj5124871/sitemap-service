@@ -1,6 +1,10 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
+import { TextSitemap, SitemapFileEntityType } from '@prisma/client';
+import { SitemapsService } from '../sitemaps/sitemaps.service';
+import { SitemapsIndexService } from '../sitemaps/sitemaps-index.service';
 import { TextSitemapsService } from './text-sitemaps.service';
+import { TextSitemapsProcessorService } from './text-sitemaps.processor.service';
 
 @Injectable()
 export class TextSitemapsNewLinksCronService {
@@ -8,7 +12,12 @@ export class TextSitemapsNewLinksCronService {
     TextSitemapsNewLinksCronService.name,
   );
 
-  constructor(private readonly textSitemapsService: TextSitemapsService) {}
+  constructor(
+    private readonly sitemapsService: SitemapsService,
+    private readonly sitemapIndexService: SitemapsIndexService,
+    private readonly textSitemapsService: TextSitemapsService,
+    private readonly textSitemapsProcessorService: TextSitemapsProcessorService,
+  ) {}
 
   async newTextSitemapsLinksProcessHandler(modulusHashValue: number) {
     try {
@@ -31,6 +40,48 @@ export class TextSitemapsNewLinksCronService {
         unprocessedTextSitemapLinks,
         count: unprocessedTextSitemapLinks.length,
       });
+
+      const textSitemapsByFile: Map<string, TextSitemap[]> = new Map();
+      const sitemapFileNameIncrementHM: Map<string, number> = new Map();
+
+      unprocessedTextSitemapLinks.forEach((textSitemap) => {
+        const { fileName, fileIncrement } =
+          this.sitemapsService.getSitemapFileName(SitemapFileEntityType.TEXT, {
+            counter: textSitemap.counter,
+            modulusHashBase: textSitemap.modulusHashBase,
+            modulusHashValue: textSitemap.modulusHashValue,
+          });
+
+        textSitemapsByFile.set(fileName, [
+          ...(textSitemapsByFile.get(fileName) || []),
+          textSitemap,
+        ]);
+        sitemapFileNameIncrementHM.set(fileName, fileIncrement);
+      });
+
+      await Promise.all(
+        [...textSitemapsByFile.keys()].map(async (siteMapFile) => {
+          try {
+            const textSitemaps = textSitemapsByFile.get(siteMapFile);
+            await this.textSitemapsProcessorService.newLinksHandler(
+              {
+                fileName: siteMapFile,
+                indexName: this.sitemapIndexService.getIndexFileName(
+                  SitemapFileEntityType.TEXT,
+                  sitemapFileNameIncrementHM.get(siteMapFile),
+                ),
+              },
+              textSitemaps,
+            );
+          } catch (e) {
+            this.logger.error({
+              message: 'Error while processing new text Sitemap links',
+              modulusHashValue,
+            });
+            this.logger.error(e);
+          }
+        }),
+      );
     } catch (err) {
       this.logger.error({
         message: 'Error while processing new text sitemap links',
