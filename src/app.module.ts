@@ -8,6 +8,7 @@ import { AppLoggerMiddleware } from './app-logger.middleware';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { PrismaService } from './prisma.service';
+import { TextSitemapsModule } from './text-sitemaps/text-sitemaps.module';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { PrismaService } from './prisma.service';
         new winston.transports.Console({ format: winston.format.json() }),
       ],
     }),
+    TextSitemapsModule,
   ],
   controllers: [AppController],
   providers: [AppService, PrismaService],
