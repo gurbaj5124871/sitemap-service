@@ -1,0 +1,5 @@
+# robots.txt file
+# In robots we believe who can crawl any page
+
+User-Agent: *
+Crawl-delay: 1

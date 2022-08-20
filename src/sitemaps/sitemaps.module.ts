@@ -6,6 +6,7 @@ import { AwsS3Service } from '../s3/aws-s3.service';
 import { SitemapsService } from './sitemaps.service';
 import { SitemapsIndexService } from './sitemaps-index.service';
 import { SitemapsIndexLinkingCronService } from './sitemaps-index-linking.cron.service';
+import { SitemapsController } from './sitemaps.controller';
 
 @Module({
   imports: [HttpModule],
@@ -23,5 +24,6 @@ import { SitemapsIndexLinkingCronService } from './sitemaps-index-linking.cron.s
     SitemapsIndexService,
     SitemapsIndexLinkingCronService,
   ],
+  controllers: [SitemapsController],
 })
 export class SitemapsModule {}
