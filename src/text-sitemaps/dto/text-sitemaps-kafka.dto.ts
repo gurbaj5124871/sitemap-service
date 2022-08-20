@@ -1,6 +1,6 @@
 import { KafkaBaseEvent, KafkaEventType } from '../../types';
 
-export interface KafkaSessionEventHeaders extends KafkaBaseEvent {
+export interface KafkaTextSitemapEventHeaders extends KafkaBaseEvent {
   eventType: KafkaEventType.TextLinkCreated | KafkaEventType.TextLinkDeleted;
   id: string;
 }

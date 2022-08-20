@@ -91,45 +91,45 @@ export class TextSitemapsNewLinksCronService {
   }
 
   @Cron('0 0 * * * *') // every hour at the start
-  async processNewSessionLinksForModulusHashValueZero() {
+  async processNewTextSitemapLinksForModulusHashValueZero() {
     await this.newTextSitemapsLinksProcessHandler(0);
   }
 
   @Cron('0 5 * * * *') // every hour at the start of 5th minute
-  async processNewSessionLinksForModulusHashValueOne() {
+  async processNewTextSitemapLinksForModulusHashValueOne() {
     await this.newTextSitemapsLinksProcessHandler(1);
   }
 
   @Cron('0 10 * * * *') // every hour at the start of 10th minute
-  async processNewSessionLinksForModulusHashValueTwo() {
+  async processNewTextSitemapLinksForModulusHashValueTwo() {
     await this.newTextSitemapsLinksProcessHandler(2);
   }
   @Cron('0 15 * * * *') // every hour at the start of 15th minute
-  async processNewSessionLinksForModulusHashValueOThree() {
+  async processNewTextSitemapLinksForModulusHashValueOThree() {
     await this.newTextSitemapsLinksProcessHandler(3);
   }
   @Cron('0 20 * * * *') // every hour at the start of 20th minute
-  async processNewSessionLinksForModulusHashValueFour() {
+  async processNewTextSitemapLinksForModulusHashValueFour() {
     await this.newTextSitemapsLinksProcessHandler(4);
   }
   @Cron('0 25 * * * *') // every hour at the start of 25th minute
-  async processNewSessionLinksForModulusHashValueFive() {
+  async processNewTextSitemapLinksForModulusHashValueFive() {
     await this.newTextSitemapsLinksProcessHandler(5);
   }
   @Cron('0 30 * * * *') // every hour at the start of 30th minute
-  async processNewSessionLinksForModulusHashValueSix() {
+  async processNewTextSitemapLinksForModulusHashValueSix() {
     await this.newTextSitemapsLinksProcessHandler(6);
   }
   @Cron('0 35 * * * *') // every hour at the start of 35th minute
-  async processNewSessionLinksForModulusHashValueSeven() {
+  async processNewTextSitemapLinksForModulusHashValueSeven() {
     await this.newTextSitemapsLinksProcessHandler(7);
   }
   @Cron('0 40 * * * *') // every hour at the start of 40th minute
-  async processNewSessionLinksForModulusHashValueEight() {
+  async processNewTextSitemapLinksForModulusHashValueEight() {
     await this.newTextSitemapsLinksProcessHandler(8);
   }
   @Cron('0 45 * * * *') // every hour at the start of 45th minute
-  async processNewSessionLinksForModulusHashValueNine() {
+  async processNewTextSitemapLinksForModulusHashValueNine() {
     await this.newTextSitemapsLinksProcessHandler(9);
   }
 }

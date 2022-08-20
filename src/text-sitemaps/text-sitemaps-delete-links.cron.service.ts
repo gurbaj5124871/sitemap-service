@@ -18,26 +18,26 @@ export class TextSitemapsDeletedLinksCronService {
   ) {}
 
   @Cron('0 50 * * * *') // every hour, at the start of the 50th minute
-  async processDeletedSessions() {
+  async processDeletedTextSitemaps() {
     try {
       this.logger.log({
         message: 'Cron triggered for processing text links marked for deletion',
       });
-      const markedForDeletionSessionLinks =
-        await this.textSitemapsService.getMarkedForDeletionSessionLinks();
+      const markedForDeletionTextSitemapLinks =
+        await this.textSitemapsService.getMarkedForDeletionTextSitemapsLinks();
 
-      if (!markedForDeletionSessionLinks.length) {
+      if (!markedForDeletionTextSitemapLinks.length) {
         return;
       }
 
       this.logger.debug({
         message: 'Found text links marked for deletion',
-        markedForDeletionSessionLinks,
-        count: markedForDeletionSessionLinks.length,
+        markedForDeletionTextSitemapLinks,
+        count: markedForDeletionTextSitemapLinks.length,
       });
 
       const textSitemapsByFile: Map<string, TextSitemap[]> = new Map();
-      markedForDeletionSessionLinks.forEach((textSitemap) => {
+      markedForDeletionTextSitemapLinks.forEach((textSitemap) => {
         const { fileName } = this.sitemapsService.getSitemapFileName(
           SitemapFileEntityType.TEXT,
           {

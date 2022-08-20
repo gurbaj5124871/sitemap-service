@@ -79,7 +79,7 @@ export class TextSitemapsProcessorService {
         });
       } else {
         this.logger.error({
-          message: 'Error while processing new session links',
+          message: 'Error while processing new text sitemaps links',
         });
         this.logger.error(err);
 
@@ -279,7 +279,7 @@ export class TextSitemapsProcessorService {
           textSitemaps,
         });
 
-        await this.textSitemapsService.updateSessionsMarkedForDeletionAsDeleted(
+        await this.textSitemapsService.updateTextSitemapsMarkedForDeletionAsDeleted(
           textSitemaps.map((textSitemap) => textSitemap.id),
         );
         return;
@@ -304,7 +304,7 @@ export class TextSitemapsProcessorService {
           });
         });
       if (!sitemapFileResp) {
-        await this.textSitemapsService.updateSessionsMarkedForDeletionAsDeleted(
+        await this.textSitemapsService.updateTextSitemapsMarkedForDeletionAsDeleted(
           textSitemaps.map((textSitemap) => textSitemap.id),
         );
         return;
@@ -343,7 +343,7 @@ export class TextSitemapsProcessorService {
       );
 
       await this.prisma.$transaction([
-        this.textSitemapsService.updateSessionsMarkedForDeletionAsDeleted(
+        this.textSitemapsService.updateTextSitemapsMarkedForDeletionAsDeleted(
           textSitemaps.map((textSitemap) => textSitemap.id),
         ),
         this.sitemapsService.updateSitemapFileMarkedAsLastMod(fileName),
@@ -372,7 +372,7 @@ export class TextSitemapsProcessorService {
         });
       } else {
         this.logger.error({
-          message: 'Error while processing deleted session links',
+          message: 'Error while processing deleted text sitemaps links',
           err,
         });
         throw err;

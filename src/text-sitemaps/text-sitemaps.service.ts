@@ -9,10 +9,10 @@ export class TextSitemapsService {
 
   constructor(private prisma: PrismaService) {}
 
-  private getModulusTenHash(sessionID: string) {
+  private getModulusTenHash(id: string) {
     return {
       modulusHashBase: 10,
-      modulusHashValue: Number(BigInt(sessionID) % BigInt(10)),
+      modulusHashValue: Number(BigInt(id) % BigInt(10)),
     };
   }
 
@@ -113,7 +113,7 @@ export class TextSitemapsService {
     });
   }
 
-  getMarkedForDeletionSessionLinks() {
+  getMarkedForDeletionTextSitemapsLinks() {
     return this.prisma.textSitemap.findMany({
       where: {
         isDeleted: true,
@@ -122,7 +122,7 @@ export class TextSitemapsService {
     });
   }
 
-  updateSessionsMarkedForDeletionAsDeleted(ids: bigint[]) {
+  updateTextSitemapsMarkedForDeletionAsDeleted(ids: bigint[]) {
     return this.prisma.textSitemap.updateMany({
       where: {
         id: {

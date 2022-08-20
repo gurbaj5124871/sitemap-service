@@ -106,7 +106,7 @@ export class SitemapsIndexLinkingCronService {
   }
 
   @Cron('0 15 * * * *') // every 15th minute of the hour
-  async processNewVideoClipSitemapsAvailableForIndexLinking() {
+  async processNewVideoSitemapsAvailableForIndexLinking() {
     this.logger.log({
       message:
         'Cron triggered for processing new video sitemaps available for index linking',

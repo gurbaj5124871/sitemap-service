@@ -48,7 +48,7 @@ CREATE TABLE "VideoSitemapModulusCounter" (
 );
 
 -- CreateTable
-CREATE TABLE "SessionRecordingClip" (
+CREATE TABLE "VideoSitemap" (
     "id" INTEGER NOT NULL,
     "link" TEXT NOT NULL,
     "videoURL" TEXT NOT NULL,
@@ -68,7 +68,7 @@ CREATE TABLE "SessionRecordingClip" (
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
-    CONSTRAINT "SessionRecordingClip_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "VideoSitemap_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -113,7 +113,7 @@ CREATE UNIQUE INDEX "JobLock_key_key" ON "JobLock"("key");
 ALTER TABLE "TextSitemap" ADD CONSTRAINT "TextSitemap_fileName_fkey" FOREIGN KEY ("fileName") REFERENCES "SitemapFile"("fileName") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "SessionRecordingClip" ADD CONSTRAINT "SessionRecordingClip_fileName_fkey" FOREIGN KEY ("fileName") REFERENCES "SitemapFile"("fileName") ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE "VideoSitemap" ADD CONSTRAINT "VideoSitemap_fileName_fkey" FOREIGN KEY ("fileName") REFERENCES "SitemapFile"("fileName") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "SitemapFile" ADD CONSTRAINT "SitemapFile_indexFileName_fkey" FOREIGN KEY ("indexFileName") REFERENCES "SitemapIndexFile"("fileName") ON DELETE RESTRICT ON UPDATE CASCADE;
