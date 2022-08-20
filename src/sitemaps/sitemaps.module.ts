@@ -5,6 +5,7 @@ import { LocksService } from '../locks/locks.service';
 import { AwsS3Service } from '../s3/aws-s3.service';
 import { SitemapsService } from './sitemaps.service';
 import { SitemapsIndexService } from './sitemaps-index.service';
+import { SitemapsIndexLinkingCronService } from './sitemaps-index-linking.cron.service';
 
 @Module({
   imports: [HttpModule],
@@ -15,7 +16,12 @@ import { SitemapsIndexService } from './sitemaps-index.service';
     AwsS3Service,
     SitemapsService,
     SitemapsIndexService,
+    SitemapsIndexLinkingCronService,
   ],
-  exports: [SitemapsService, SitemapsIndexService],
+  exports: [
+    SitemapsService,
+    SitemapsIndexService,
+    SitemapsIndexLinkingCronService,
+  ],
 })
 export class SitemapsModule {}
