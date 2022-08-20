@@ -7,6 +7,7 @@ import { validate } from './env.validation';
 import { AppLoggerMiddleware } from './app-logger.middleware';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { PrismaService } from './prisma.service';
 
 @Module({
   imports: [
@@ -24,7 +25,7 @@ import { AppService } from './app.service';
     }),
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, PrismaService],
 })
 export class AppModule {
   configure(consumer: MiddlewareConsumer): void {
