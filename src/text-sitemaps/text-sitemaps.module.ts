@@ -6,6 +6,7 @@ import { LocksModule } from 'src/locks/locks.module';
 import { AwsS3Module } from 'src/s3/s3.module';
 import { TextSitemapsService } from './text-sitemaps.service';
 import { TextSitemapsConsumerService } from './text-sitemaps-consumer.service';
+import { TextSitemapsNewLinksCronService } from './text-sitemaps-new-links.cron.service';
 
 @Module({
   imports: [HttpModule, LocksModule, AwsS3Module],
@@ -16,6 +17,10 @@ import { TextSitemapsConsumerService } from './text-sitemaps-consumer.service';
     TextSitemapsService,
     TextSitemapsConsumerService,
   ],
-  exports: [TextSitemapsService, TextSitemapsConsumerService],
+  exports: [
+    TextSitemapsService,
+    TextSitemapsConsumerService,
+    TextSitemapsNewLinksCronService,
+  ],
 })
 export class TextSitemapsModule {}

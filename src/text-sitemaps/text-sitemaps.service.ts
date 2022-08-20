@@ -87,4 +87,29 @@ export class TextSitemapsService {
       },
     });
   }
+
+  getUnprocessedTextSitemapLinks(filters?: {
+    modulus?: {
+      modulusHashBase: number;
+      modulusHashValue: number[];
+    };
+  }) {
+    return this.prisma.textSitemap.findMany({
+      where: {
+        fileName: null,
+        isDeleted: false,
+        isIgnored: false,
+        ...(filters?.modulus?.modulusHashValue.length && {
+          modulusHashBase: filters.modulus.modulusHashBase,
+          modulusHashValue: {
+            in: filters.modulus.modulusHashValue,
+          },
+        }),
+      },
+      orderBy: {
+        counter: 'asc',
+      },
+      take: 50,
+    });
+  }
 }
