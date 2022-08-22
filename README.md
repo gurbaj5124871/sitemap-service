@@ -80,7 +80,6 @@ $ npm run test:cov
 ```
 
 <br/>
-<br/>
 
 # How it works
 
@@ -111,6 +110,13 @@ $ npm run test:cov
       s3->>CronScheduler: Success Ack
 ```
 
+# Scalability
+
+Every new link is partitioned based on the id (Expected it to be bigint/int) by modulus base 10.
+Hence each type of entity link creates 10 different sitemap files and follow naming convention as `text-sitemap-{modulusHashBase}-{modulusHashValue}-{fileIncrement}.xml` where modulusHashBase is 10 and modulusHashValue is `id % 10` and fileIncrement is the number of files created for that type of entity which basically increment after every `50000` links which is the limit of urls you can have in a sitemap file. <br>
+Sitemap Index files also follow the same logic for partitioning and the file increment happens after `20000` sitemap urls in a sitemap index file.
+So in theory the service can be scaled for parallel processing of 10 individual processes. And the service is written in a way to handle the case where we want multiple nodes running for same modulusHashValue for more reliability. Crons lock the files via table locks so that no other processes is accessing the file at the same time.
+
 ## License
 
-Nest is [MIT licensed](LICENSE).
+Repository is [GNU licensed](LICENSE).
