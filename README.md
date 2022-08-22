@@ -20,8 +20,6 @@ Automated sitemap generator pipeline which automatically creates or amends sitem
 2. [Prisma.io](https://www.prisma.io/docs/getting-started) : Next-generation Node.js and TypeScript ORM
 3. [kafkaJS](https://kafka.js.org/docs/getting-started) : Kafka client for nodeJS
 
-<br/>
-
 # Getting Started
 
 Create `.env` and override custom environment values
@@ -83,6 +81,35 @@ $ npm run test:cov
 
 <br/>
 <br/>
+
+# How it works
+
+```mermaid
+  sequenceDiagram
+      KafkaProducer->>KafkaConsumer: Text Type Link Created Event Type
+      Note over KafkaProducer,KafkaConsumer: When a new text/static link is created
+      KafkaConsumer->>Postgres: Consume and write in table
+      CronScheduler->>+Postgres: In interval fetch new text/static for sitemap generation
+      Note over CronScheduler,Postgres: Determine the filename by using modulus base 10 of the id
+      CronScheduler->>+s3: Fetch sitemap xml file from s3 if the file exists in database
+      s3->>CronScheduler: return sitemap file if requested
+      CronScheduler->>+s3: Update or Create new sitemap file in s3
+      s3->>CronScheduler: Success Ack
+      CronScheduler->>+Postgres: Write the file name for links in database
+      Postgres->>CronScheduler: Success Ack
+       CronScheduler->>+Google: Send sitemap file to Google for crawling
+      CronScheduler->>+Postgres: Fetch new sitemap files waiting for linking with index file
+      Postgres->>CronScheduler: New sitemap files
+      CronScheduler->>+s3: Write new sitemap file links in corresponding sitemap index file in s3
+      s3->>CronScheduler: Success Ack
+      CronScheduler->>+Postgres: Write the sitemap index file name for new sitemap files in database
+      Postgres->>CronScheduler: Success Ack
+      CronScheduler->>+Google: Send sitemap file to Google for crawling
+      CronScheduler->>+Postgres: Fetch new sitemap index files waiting for linking with robots.txt file
+      Postgres->>CronScheduler: New sitemap index files
+      CronScheduler->>+s3: Write new sitemap index file links in robots.txt file
+      s3->>CronScheduler: Success Ack
+```
 
 ## License
 
